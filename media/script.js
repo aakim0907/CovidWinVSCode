@@ -13,7 +13,7 @@
 
         _fetchSites() {
             const h1 = document.createElement('h1');
-            h1.textContent = 'hello';
+            h1.textContent = 'fetch';
             this.parentDiv.appendChild(h1);
 
             try {
@@ -39,13 +39,13 @@
         }
     }
 
-    const testingSites = new CovidTestingSites(inputDiv, testingSitesDiv);
+    const testingSites = new CovidTestingSites(testingSitesDiv);
 
-    inputDiv.addEventListener("keyup", (e) => {
+    inputDiv.addEventListener("keyup", e => {
         if (e.keyCode === 13) {
             e.preventDefault();
             counter.textContent = count++;
-            try {
+            try {            
                 testingSites._fetchSites();
             } catch (error) {
                 vscode.postMessage({
