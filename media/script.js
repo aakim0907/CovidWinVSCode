@@ -1,8 +1,5 @@
 (function () {
     const vscode = acquireVsCodeApi();
-
-    let count = 0;
-    const counter = document.getElementById('lines-of-code-counter');
     const inputDiv = document.getElementById("state-name");
     const testingSitesDiv = document.getElementById('testing-sites');
 
@@ -11,23 +8,38 @@
             this.parentDiv = testingSitesDiv;
         }
 
-        _fetchSites() {
-            const h1 = document.createElement('h1');
-            h1.textContent = 'fetch';
-            this.parentDiv.appendChild(h1);
-
+        _fetchSites(stateInput) {
             try {
-                fetch("https://covid-19-testing.github.io/locations/washington/complete.json")
+                fetch(`https://covid-19-testing.github.io/locations/${stateInput}/complete.json`)
                 .then(response => response.json())
                 .then(data => {
-                    const h1 = document.createElement('h1');
-                    h1.textContent = 'hi';
-                    this.parentDiv.appendChild(h1);
+                    data
+                    .sort((d1, d2) => d1.updated > d2.updated)
+                    .forEach(d => {
+                        const div = document.createElement('div');
 
-                    data.forEach(d => {
-                        const h2 = document.createElement('h2');
-                        h2.textContent = d.name;
-                        this.parentDiv.appendChild(h2);
+                        const name = document.createElement('h3');
+                        name.textContent = d.name;
+                        div.appendChild(name);
+
+                        const {address_1, city, postal_code} = d.physical_address[0];
+                        const address = document.createElement('p');
+                        address.textContent = `${address_1}, ${city} ${postal_code}`;
+                        div.appendChild(address);
+
+                        const phone = document.createElement('p');
+                        phone.textContent = `${d.phones[0].number}`;
+                        div.appendChild(phone);
+
+                        const updated = document.createElement('i');
+                        updated.textContent = `Last Updated : ${d.updated}`;
+                        div.appendChild(updated);
+
+                        const breakline = document.createElement('hr');
+                        breakline.className="breakline";
+                        div.appendChild(breakline);
+
+                        this.parentDiv.appendChild(div);
                     });
                 });
             } catch (error) {
@@ -44,9 +56,8 @@
     inputDiv.addEventListener("keyup", e => {
         if (e.keyCode === 13) {
             e.preventDefault();
-            counter.textContent = count++;
             try {            
-                testingSites._fetchSites();
+                testingSites._fetchSites(inputDiv.value.toLowerCase());
             } catch (error) {
                 vscode.postMessage({
                     command: 'alert',

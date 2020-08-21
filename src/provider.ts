@@ -58,19 +58,19 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
     </head>
     <body>
         <div class="main">
-            <h3>Check COVID Testing Sites Near You</h3>
+            <h2>Check COVID Testing Sites Near You</h2>
             <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="250" />
-            <h1 id="lines-of-code-counter">0</h1>
     
+            <span>Type the name of the state you want to know about</span>
             <input type="text" id="state-name" />
-            <div id="testing-sites"></div>
+            <div id="testing-sites" />
         <div/>
         
         <script nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;
     };
-
+            // <h1 id="lines-of-code-counter">0</h1>
     private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<vscode.CustomDocumentEditEvent<any>>();
 	public readonly onDidChangeCustomDocument = this._onDidChangeCustomDocument.event;
     saveCustomDocument(document: any, cancellation: vscode.CancellationToken): Thenable<void> {
