@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as vscode from 'vscode';
 
 function getNonce() {
@@ -27,11 +26,15 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
 
             panel.webview.onDidReceiveMessage(
                 message => {
-                  switch (message.command) {
-                    case 'alert':
-                      vscode.window.showErrorMessage(message.text);
-                      return;
-                  }
+                    console.log('message',message);
+                    switch (message.command) {
+                        case 'alert':
+                            vscode.window.showErrorMessage(message.text);
+                            return;
+                        case 'information':
+                            vscode.window.showInformationMessage(message.text);
+                            return;
+                    }
                 },
                 undefined,
                 context.subscriptions
@@ -49,28 +52,29 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
         const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
     
         return `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>COVID Testing Sites</title>
-        <link rel="stylesheet" type="text/css" href ="${stylesheetUri}">
-    </head>
-    <body>
-        <div class="main">
-            <h2>Check COVID Testing Sites Near You</h2>
-            <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="250" />
-    
-            <span>Type the name of the state you want to know about</span>
-            <input type="text" id="state-name" />
-            <div id="testing-sites" />
-        <div/>
-        
-        <script nonce="${nonce}" src="${scriptUri}"></script>
-    </body>
-    </html>`;
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>COVID Testing Sites</title>
+                <link rel="stylesheet" type="text/css" href ="${stylesheetUri}">
+            </head>
+            <body>
+                <div class="main">
+                    <h2>Check COVID Testing Sites Near You</h2>
+                    <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="250" />
+            
+                    <span>Type the name of the state you want to know about</span>
+                    <input type="text" id="state-name" placeholder="washington"/>
+                    <div id="testing-sites" />
+                <div/>
+                
+                <script nonce="${nonce}" src="${scriptUri}">
+                </script>
+            </body>
+            </html>`;
     };
-            // <h1 id="lines-of-code-counter">0</h1>
+
     private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<vscode.CustomDocumentEditEvent<any>>();
 	public readonly onDidChangeCustomDocument = this._onDidChangeCustomDocument.event;
     saveCustomDocument(document: any, cancellation: vscode.CancellationToken): Thenable<void> {
