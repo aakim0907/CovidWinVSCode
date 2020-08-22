@@ -32,7 +32,11 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
                             vscode.window.showErrorMessage(message.text);
                             return;
                         case 'information':
-                            vscode.window.showInformationMessage(message.text);
+                            vscode.window.showInformationMessage(message.name, 'Open in Bing Maps')
+                            .then(() => {
+                                const uri = vscode.Uri.parse(message.url);
+                                vscode.env.openExternal(uri);
+                            });
                             return;
                     }
                 },

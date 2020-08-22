@@ -29,9 +29,11 @@
                         address.textContent = `${address_1}, ${city} ${postal_code}`;
 
                         name.onclick = function() {
+                            const query = site.name + ' ' + address_1;
                             vscode.postMessage({
                                 command: 'information',
-                                text: `https://www.bing.com/maps?q=${address.textContent.replace(/\s/g, '+')}`
+                                name: site.name, 
+                                url: `https://www.bing.com/maps?q=${query.replace(/\s/g, '+')}`
                             });
                             // const uri = vscode.Uri.parse(`https://www.bing.com/maps?q=${this._parseAddressToQuery(address.value)}`);
                             // const uri = this.vsCodeEnv.Uri.parse(`https://www.google.com`);
