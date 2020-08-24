@@ -69,7 +69,7 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
                     <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="250" />
             
                     <span>Type the name of the state you want to know about</span>
-                    <input type="text" id="state-name" placeholder="washington"/>
+                    <input type="text" id="state-name"/>
                     <div id="testing-sites" />
                 <div/>
                 
