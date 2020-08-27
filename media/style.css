@@ -16,7 +16,7 @@ input {
     border-radius: 3px;
 }
 
-#testing-sites {
+.testing-sites {
     min-width: 350px;
     max-height: 500px;
     overflow-y: auto;
@@ -24,14 +24,14 @@ input {
     margin-top: 20px;
     padding: 0 15px 15px 15px;
 }
-#testing-sites h3 {
+.testing-sites h3 {
     margin-bottom: 4px;
     color: turquoise;
 }
-#testing-sites h3:hover {
+.testing-sites h3:hover {
     cursor: pointer;
 }
-#testing-sites p {
+.testing-sites p {
     margin: 2px 0;
 }
 

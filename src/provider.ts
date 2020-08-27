@@ -1,59 +1,48 @@
 import * as vscode from 'vscode';
 
-function getNonce() {
-	let text = '';
-	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	for (let i = 0; i < 32; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-	return text;
-}
-
-export class CovidProvider implements vscode.CustomEditorProvider<any> {
-
+export class ExtensionProvider implements vscode.CustomEditorProvider<any> {
     public static register(context: vscode.ExtensionContext): vscode.Disposable {
 		return vscode.commands.registerCommand('covidvscode.start', () => {
             const panel = vscode.window.createWebviewPanel(
-                'catCoding',
+                'customExtension',
                 'COVID Testing Sites',
                 vscode.ViewColumn.One,
                 {
                     enableScripts: true,
-                } // Webview options.
+                } 
             );
-            // And set its HTML content
             panel.webview.html = this.getWebviewContent(context.extensionUri, panel.webview);
 
             panel.webview.onDidReceiveMessage(
-                message => {
-                    console.log('message',message);
-                    switch (message.command) {
-                        case 'alert':
-                            vscode.window.showErrorMessage(message.text);
-                            return;
-                        case 'information':
-                            vscode.window.showInformationMessage(message.name, 'Open in Bing Maps')
-                            .then(() => {
-                                const uri = vscode.Uri.parse(message.url);
-                                vscode.env.openExternal(uri);
-                            });
-                            return;
-                    }
-                },
+                message => { this.showMessage(message); },
                 undefined,
                 context.subscriptions
               );
         });
     }
+
+    static showMessage = (message: any) => {
+        switch (message.command) {
+            case 'alert':
+                vscode.window.showErrorMessage(message.text);
+                break;
+            case 'information':
+                vscode.window.showInformationMessage(`Check [${message.name}] on the map 🗺️`, 'Open Bing Maps')
+                    .then(() => {
+                        const uri = vscode.Uri.parse(message.url);
+                        vscode.env.openExternal(uri);
+                    });
+                break;
+            default:
+                break;
+        }
+    };
     
     static getWebviewContent = (extensionUri: vscode.Uri, webview: vscode.Webview) => {
-        const nonce = getNonce();
-
-        const stylesheetPathOnDisk = vscode.Uri.joinPath(extensionUri, 'media', 'style.css');
-        const stylesheetUri = webview.asWebviewUri(stylesheetPathOnDisk);
-    
-        const scriptPathOnDisk = vscode.Uri.joinPath(extensionUri, 'media', 'script.js');
-        const scriptUri = webview.asWebviewUri(scriptPathOnDisk);
+        const getWebviewUri = (filename: string) => {
+            const pathOnnDisk = vscode.Uri.joinPath(extensionUri, 'media', filename);
+            return webview.asWebviewUri(pathOnnDisk);
+        };
     
         return `<!DOCTYPE html>
             <html lang="en">
@@ -61,7 +50,7 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>COVID Testing Sites</title>
-                <link rel="stylesheet" type="text/css" href ="${stylesheetUri}">
+                <link rel="stylesheet" type="text/css" href ="${getWebviewUri('style.css')}">
             </head>
             <body>
                 <div class="main">
@@ -73,8 +62,7 @@ export class CovidProvider implements vscode.CustomEditorProvider<any> {
                     <div id="testing-sites" />
                 <div/>
                 
-                <script nonce="${nonce}" src="${scriptUri}">
-                </script>
+                <script src="${getWebviewUri('script.js')}" />
             </body>
             </html>`;
     };
